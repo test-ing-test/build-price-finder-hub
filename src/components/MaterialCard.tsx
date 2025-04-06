@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Plus, Minus, Globe } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Globe, ExternalLink } from 'lucide-react';
 import { useCart, Material } from '@/context/CartContext';
 import { Badge } from '@/components/ui/badge';
 
@@ -17,9 +17,41 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
   const cartItem = items.find(item => item.material.id === material.id);
   const quantity = cartItem ? cartItem.quantity : 0;
 
+  // Generate a mock external URL for online suppliers
+  const getExternalUrl = () => {
+    const supplierDomain = material.supplier
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[^a-z0-9]/g, '');
+    
+    return `https://www.${supplierDomain}.com/product/${material.id}`;
+  };
+
+  // Render the appropriate wrapper based on whether it's an online product
+  const ContentWrapper = ({ children }: { children: React.ReactNode }) => {
+    if (material.isOnline) {
+      return (
+        <a 
+          href={getExternalUrl()} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="flex-grow"
+        >
+          {children}
+        </a>
+      );
+    }
+    
+    return (
+      <Link to={`/material/${material.id}`} className="flex-grow">
+        {children}
+      </Link>
+    );
+  };
+
   return (
     <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-md h-full flex flex-col">
-      <Link to={`/material/${material.id}`} className="flex-grow">
+      <ContentWrapper>
         <div className="aspect-square w-full overflow-hidden bg-gray-100 relative">
           <img 
             src={material.image} 
@@ -33,7 +65,12 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
           )}
         </div>
         <CardContent className="p-4">
-          <h3 className="font-semibold text-lg truncate">{material.name}</h3>
+          <h3 className="font-semibold text-lg truncate">
+            {material.name}
+            {material.isOnline && (
+              <ExternalLink className="h-4 w-4 inline ml-1" />
+            )}
+          </h3>
           <p className="text-sm text-gray-500 mb-2">{material.category}</p>
           <div className="flex justify-between items-center">
             <div>
@@ -44,7 +81,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
             </div>
           </div>
         </CardContent>
-      </Link>
+      </ContentWrapper>
       <CardFooter className="p-4 pt-0">
         {quantity === 0 ? (
           <Button 

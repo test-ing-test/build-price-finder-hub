@@ -20,7 +20,8 @@ export const searchOnline = async (query: string): Promise<Material[]> => {
       unit: 'Bag (94 lb)',
       supplier: 'Online Supplier A',
       contact: '+1 (555) 111-2222',
-      image: '/placeholder.svg'
+      image: '/placeholder.svg',
+      isOnline: true
     },
     {
       id: 'online-2',
@@ -30,7 +31,8 @@ export const searchOnline = async (query: string): Promise<Material[]> => {
       unit: 'sq ft',
       supplier: 'Online Supplier B',
       contact: '+1 (555) 222-3333',
-      image: '/placeholder.svg'
+      image: '/placeholder.svg',
+      isOnline: true
     },
     {
       id: 'online-3',
@@ -40,7 +42,8 @@ export const searchOnline = async (query: string): Promise<Material[]> => {
       unit: 'Roll (100 sq ft)',
       supplier: 'Online Supplier C',
       contact: '+1 (555) 333-4444',
-      image: '/placeholder.svg'
+      image: '/placeholder.svg',
+      isOnline: true
     }
   ];
   
