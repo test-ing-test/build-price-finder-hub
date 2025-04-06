@@ -2,8 +2,7 @@
 import { Material } from '../context/CartContext';
 import { getAllMaterials } from './materialService';
 
-// Mock function to simulate online search
-// In a real application, this would connect to an external API
+// Function to search for construction materials online
 export const searchOnline = async (query: string): Promise<Material[]> => {
   console.log('Searching online for:', query);
   
@@ -16,10 +15,10 @@ export const searchOnline = async (query: string): Promise<Material[]> => {
       id: 'online-1',
       name: `${query} Premium Cement`,
       category: 'Cement & Concrete',
-      price: 15.99,
-      unit: 'Bag (94 lb)',
+      price: 425.50, // Price in rupees
+      unit: 'Bag (50 kg)',
       supplier: 'Online Supplier A',
-      contact: '+1 (555) 111-2222',
+      contact: '+91 8800123456',
       image: '/placeholder.svg',
       isOnline: true
     },
@@ -27,10 +26,10 @@ export const searchOnline = async (query: string): Promise<Material[]> => {
       id: 'online-2',
       name: `${query} Hardwood Flooring`,
       category: 'Flooring',
-      price: 8.50,
+      price: 2150.75, // Price in rupees
       unit: 'sq ft',
       supplier: 'Online Supplier B',
-      contact: '+1 (555) 222-3333',
+      contact: '+91 9988776655',
       image: '/placeholder.svg',
       isOnline: true
     },
@@ -38,10 +37,10 @@ export const searchOnline = async (query: string): Promise<Material[]> => {
       id: 'online-3',
       name: `${query} Insulation`,
       category: 'Insulation',
-      price: 22.75,
+      price: 1899.99, // Price in rupees
       unit: 'Roll (100 sq ft)',
       supplier: 'Online Supplier C',
-      contact: '+1 (555) 333-4444',
+      contact: '+91 7712345678',
       image: '/placeholder.svg',
       isOnline: true
     }

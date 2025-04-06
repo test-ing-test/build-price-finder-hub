@@ -17,14 +17,25 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
   const cartItem = items.find(item => item.material.id === material.id);
   const quantity = cartItem ? cartItem.quantity : 0;
 
-  // Generate a mock external URL for online suppliers
+  // Get real external URL for online suppliers
   const getExternalUrl = () => {
-    const supplierDomain = material.supplier
-      .toLowerCase()
-      .replace(/\s+/g, '')
-      .replace(/[^a-z0-9]/g, '');
+    // Map supplier names to actual websites
+    const supplierWebsites: Record<string, string> = {
+      'Online Supplier A': 'https://www.amazon.in',
+      'Online Supplier B': 'https://www.flipkart.com',
+      'Online Supplier C': 'https://www.industrybuying.com',
+      'default': 'https://www.google.com/search'
+    };
     
-    return `https://www.${supplierDomain}.com/product/${material.id}`;
+    const baseUrl = supplierWebsites[material.supplier] || supplierWebsites['default'];
+    
+    // For search-based sites, add the product name as a query parameter
+    if (baseUrl === supplierWebsites['default']) {
+      return `${baseUrl}?q=${encodeURIComponent(material.name)}`;
+    }
+    
+    // For e-commerce sites, go to a search page with product name
+    return `${baseUrl}/search?q=${encodeURIComponent(material.name)}`;
   };
 
   // Render the appropriate wrapper based on whether it's an online product
@@ -75,7 +86,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
           <div className="flex justify-between items-center">
             <div>
               <span className="text-lg font-bold text-construction-blue">
-                ${material.price.toFixed(2)}
+                {material.isOnline ? '₹' : '$'}{material.price.toFixed(2)}
               </span>
               <span className="text-sm text-gray-500 ml-1">/ {material.unit}</span>
             </div>

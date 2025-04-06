@@ -34,7 +34,9 @@ const ProductComparison: React.FC<ProductComparisonProps> = ({ products }) => {
               <TableRow key={product.id}>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.supplier}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
+                <TableCell>
+                  {product.isOnline ? '₹' : '$'}{product.price.toFixed(2)}
+                </TableCell>
                 <TableCell>{product.unit}</TableCell>
                 <TableCell>{product.isOnline ? 'Online' : 'Local'}</TableCell>
               </TableRow>
