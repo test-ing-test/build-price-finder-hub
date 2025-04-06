@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { toast } from "sonner";
 
@@ -11,6 +10,7 @@ export interface Material {
   supplier: string;
   contact: string;
   image: string;
+  isOnline?: boolean; // Adding the isOnline property as optional
 }
 
 export interface CartItem {
