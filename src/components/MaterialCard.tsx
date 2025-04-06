@@ -21,6 +21,9 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
   const getExternalUrl = () => {
     // Map supplier names to actual websites
     const supplierWebsites: Record<string, string> = {
+      'Amazon India': 'https://www.amazon.in',
+      'Flipkart': 'https://www.flipkart.com',
+      'Industry Buying': 'https://www.industrybuying.com',
       'Online Supplier A': 'https://www.amazon.in',
       'Online Supplier B': 'https://www.flipkart.com',
       'Online Supplier C': 'https://www.industrybuying.com',
@@ -31,7 +34,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
     
     // For search-based sites, add the product name as a query parameter
     if (baseUrl === supplierWebsites['default']) {
-      return `${baseUrl}?q=${encodeURIComponent(material.name)}`;
+      return `${baseUrl}?q=${encodeURIComponent(material.name + ' construction material')}`;
     }
     
     // For e-commerce sites, go to a search page with product name

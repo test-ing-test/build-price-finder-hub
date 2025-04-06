@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import MaterialCard from '@/components/MaterialCard';
 import ProductComparison from '@/components/ProductComparison';
+import { ApiKeyModal } from '@/components/ApiKeyModal';
 import { 
   getAllMaterials, 
   getCategories, 
@@ -30,8 +30,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SlidersHorizontal, Globe, BarChart2 } from 'lucide-react';
+import { SlidersHorizontal, Globe, BarChart2, Key } from 'lucide-react';
 import { toast } from "sonner";
+import { FirecrawlService } from '@/utils/FirecrawlService';
 
 const Materials = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,13 +44,13 @@ const Materials = () => {
   const [localSearch, setLocalSearch] = useState('');
   const [isSearchingOnline, setIsSearchingOnline] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(false);
   
   const categories = ['all', ...getCategories()];
   const searchQuery = searchParams.get('search') || '';
   const categoryQuery = searchParams.get('category') || '';
   
   useEffect(() => {
-    // Get initial materials based on URL parameters
     let initialMaterials: Material[] = [];
     
     if (searchQuery) {
@@ -66,7 +67,11 @@ const Materials = () => {
     setFilteredMaterials(initialMaterials);
   }, [searchQuery, categoryQuery]);
   
-  // Handle category change
+  useEffect(() => {
+    const apiKey = FirecrawlService.getApiKey();
+    setHasApiKey(!!apiKey);
+  }, []);
+  
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
     
@@ -79,7 +84,6 @@ const Materials = () => {
       searchParams.set('category', category);
     }
     
-    // Maintain search if present
     if (localSearch) {
       filtered = filtered.filter(material => 
         material.name.toLowerCase().includes(localSearch.toLowerCase())
@@ -91,7 +95,6 @@ const Materials = () => {
     setSearchParams(searchParams);
   };
   
-  // Handle search input
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -104,16 +107,20 @@ const Materials = () => {
       
       searchParams.set('search', localSearch);
       
-      // Search online if enabled
       if (isSearchingOnline) {
         try {
           toast.info("Searching online for products...");
+          
+          const apiKey = FirecrawlService.getApiKey();
+          if (!apiKey && !hasApiKey) {
+            toast.error("API key required for real-time data. Using estimated prices.");
+          }
+          
           const onlineSearchResults = await searchOnline(localSearch);
           setOnlineResults(onlineSearchResults);
           
           if (onlineSearchResults.length > 0) {
             toast.success(`Found ${onlineSearchResults.length} products online`);
-            // Combine local and online results
             const combinedResults = compareProducts(filtered, onlineSearchResults);
             setFilteredMaterials(sortMaterials(combinedResults, sort));
           } else {
@@ -132,13 +139,11 @@ const Materials = () => {
     setSearchParams(searchParams);
   };
   
-  // Handle sort change
   const handleSortChange = (value: string) => {
     setSort(value);
     setFilteredMaterials(sortMaterials([...filteredMaterials], value));
   };
   
-  // Sort materials function
   const sortMaterials = (materials: Material[], sortOption: string): Material[] => {
     switch (sortOption) {
       case 'name-asc':
@@ -160,7 +165,6 @@ const Materials = () => {
         <h1 className="text-3xl font-bold mb-8">{companyInfo.name} - Construction Materials</h1>
         
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar / Filters */}
           <div className="lg:w-1/4">
             <div className="sticky top-24 bg-white p-6 rounded-lg border">
               <h2 className="text-xl font-semibold mb-4 flex items-center">
@@ -192,6 +196,16 @@ const Materials = () => {
                     Search online
                   </label>
                 </div>
+                
+                {isSearchingOnline && (
+                  <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
+                    <span className="flex items-center">
+                      <Key className="h-3 w-3 mr-1" />
+                      {hasApiKey ? "API key set" : "No API key (mock data)"}
+                    </span>
+                    <ApiKeyModal />
+                  </div>
+                )}
                 
                 {onlineResults.length > 0 && (
                   <div className="flex items-center space-x-2 mt-4">
@@ -244,9 +258,7 @@ const Materials = () => {
             </div>
           </div>
           
-          {/* Main Content */}
           <div className="lg:w-3/4">
-            {/* Mobile Tabs for Categories (visible only on mobile) */}
             <div className="lg:hidden mb-6">
               <Tabs defaultValue={activeCategory}>
                 <TabsList className="w-full overflow-x-auto flex-nowrap">
@@ -264,7 +276,6 @@ const Materials = () => {
               </Tabs>
             </div>
             
-            {/* Results Count & Sort (Mobile) */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <p className="text-gray-600">
                 Showing {filteredMaterials.length} {filteredMaterials.length === 1 ? 'material' : 'materials'}
@@ -287,12 +298,10 @@ const Materials = () => {
               </div>
             </div>
             
-            {/* Product Comparison Table */}
             {showComparison && onlineResults.length > 0 && (
               <ProductComparison products={filteredMaterials} />
             )}
             
-            {/* Materials Grid */}
             {filteredMaterials.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                 {filteredMaterials.map(material => (
