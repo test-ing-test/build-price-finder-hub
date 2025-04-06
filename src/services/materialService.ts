@@ -1,5 +1,11 @@
-
 import { Material } from '../context/CartContext';
+
+// Company information - can be updated here
+export const companyInfo = {
+  name: "BuildPrice Pro",
+  phone: "+1 (800) 555-9876",
+  email: "info@buildpricepro.com"
+};
 
 // Mock data for materials
 const materials: Material[] = [
@@ -121,6 +127,86 @@ const materials: Material[] = [
     unit: 'Kit (covers 200 sq ft)',
     supplier: 'Insulation Experts',
     contact: '+1 (555) 678-9012',
+    image: '/placeholder.svg'
+  },
+  {
+    id: '13',
+    name: 'Ceramic Wall Tile',
+    category: 'Flooring',
+    price: 3.25,
+    unit: 'sq ft',
+    supplier: 'Tile Town',
+    contact: '+1 (555) 901-2345',
+    image: '/placeholder.svg'
+  },
+  {
+    id: '14',
+    name: 'Laminate Countertop',
+    category: 'Countertops',
+    price: 25.00,
+    unit: 'sq ft',
+    supplier: 'Stone Creations',
+    contact: '+1 (555) 456-7890',
+    image: '/placeholder.svg'
+  },
+  {
+    id: '15',
+    name: 'Concrete Mix',
+    category: 'Cement & Concrete',
+    price: 6.75,
+    unit: 'Bag (60 lb)',
+    supplier: 'BuildWell Supplies',
+    contact: '+1 (555) 123-4567',
+    image: '/placeholder.svg'
+  },
+  {
+    id: '16',
+    name: 'Metal Roofing',
+    category: 'Roofing',
+    price: 4.50,
+    unit: 'sq ft',
+    supplier: 'Roofing Solutions',
+    contact: '+1 (555) 987-6543',
+    image: '/placeholder.svg'
+  },
+  {
+    id: '17',
+    name: 'Asphalt Shingles',
+    category: 'Roofing',
+    price: 32.99,
+    unit: 'Bundle (33.3 sq ft)',
+    supplier: 'Roofing Solutions',
+    contact: '+1 (555) 987-6543',
+    image: '/placeholder.svg'
+  },
+  {
+    id: '18',
+    name: 'LED Recessed Lighting',
+    category: 'Electrical',
+    price: 18.49,
+    unit: 'Each',
+    supplier: 'Electric Depot',
+    contact: '+1 (555) 444-3333',
+    image: '/placeholder.svg'
+  },
+  {
+    id: '19',
+    name: 'Circuit Breaker',
+    category: 'Electrical',
+    price: 8.99,
+    unit: 'Each',
+    supplier: 'Electric Depot',
+    contact: '+1 (555) 444-3333',
+    image: '/placeholder.svg'
+  },
+  {
+    id: '20',
+    name: 'Bathroom Vanity',
+    category: 'Bathroom',
+    price: 249.99,
+    unit: 'Each',
+    supplier: 'Fixture World',
+    contact: '+1 (555) 222-1111',
     image: '/placeholder.svg'
   }
 ];

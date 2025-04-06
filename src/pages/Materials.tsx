@@ -3,15 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import MaterialCard from '@/components/MaterialCard';
+import ProductComparison from '@/components/ProductComparison';
 import { 
   getAllMaterials, 
   getCategories, 
   getMaterialsByCategory, 
-  searchMaterials 
+  searchMaterials,
+  companyInfo
 } from '@/services/materialService';
+import { searchOnline, compareProducts } from '@/services/searchService';
 import { Material } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { 
   Tabs, 
   TabsContent, 
@@ -26,15 +30,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, Globe, BarChart2 } from 'lucide-react';
+import { toast } from "sonner";
 
 const Materials = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [materials, setMaterials] = useState<Material[]>([]);
   const [filteredMaterials, setFilteredMaterials] = useState<Material[]>([]);
+  const [onlineResults, setOnlineResults] = useState<Material[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [sort, setSort] = useState<string>('name-asc');
   const [localSearch, setLocalSearch] = useState('');
+  const [isSearchingOnline, setIsSearchingOnline] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
   
   const categories = ['all', ...getCategories()];
   const searchQuery = searchParams.get('search') || '';
@@ -84,7 +92,7 @@ const Materials = () => {
   };
   
   // Handle search input
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (localSearch) {
@@ -95,6 +103,27 @@ const Materials = () => {
       setFilteredMaterials(sortMaterials(filtered, sort));
       
       searchParams.set('search', localSearch);
+      
+      // Search online if enabled
+      if (isSearchingOnline) {
+        try {
+          toast.info("Searching online for products...");
+          const onlineSearchResults = await searchOnline(localSearch);
+          setOnlineResults(onlineSearchResults);
+          
+          if (onlineSearchResults.length > 0) {
+            toast.success(`Found ${onlineSearchResults.length} products online`);
+            // Combine local and online results
+            const combinedResults = compareProducts(filtered, onlineSearchResults);
+            setFilteredMaterials(sortMaterials(combinedResults, sort));
+          } else {
+            toast.info("No additional products found online");
+          }
+        } catch (error) {
+          console.error("Error searching online:", error);
+          toast.error("Error searching online");
+        }
+      }
     } else {
       setFilteredMaterials(sortMaterials(materials, sort));
       searchParams.delete('search');
@@ -128,7 +157,7 @@ const Materials = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Construction Materials</h1>
+        <h1 className="text-3xl font-bold mb-8">{companyInfo.name} - Construction Materials</h1>
         
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar / Filters */}
@@ -151,6 +180,32 @@ const Materials = () => {
                   />
                   <Button type="submit">Search</Button>
                 </form>
+                
+                <div className="flex items-center space-x-2 mt-4">
+                  <Switch 
+                    id="search-online" 
+                    checked={isSearchingOnline}
+                    onCheckedChange={setIsSearchingOnline}
+                  />
+                  <label htmlFor="search-online" className="flex items-center cursor-pointer">
+                    <Globe className="h-4 w-4 mr-1" />
+                    Search online
+                  </label>
+                </div>
+                
+                {onlineResults.length > 0 && (
+                  <div className="flex items-center space-x-2 mt-4">
+                    <Switch 
+                      id="show-comparison" 
+                      checked={showComparison}
+                      onCheckedChange={setShowComparison}
+                    />
+                    <label htmlFor="show-comparison" className="flex items-center cursor-pointer">
+                      <BarChart2 className="h-4 w-4 mr-1" />
+                      Show comparison
+                    </label>
+                  </div>
+                )}
               </div>
               
               <div className="mb-6">
@@ -232,9 +287,14 @@ const Materials = () => {
               </div>
             </div>
             
+            {/* Product Comparison Table */}
+            {showComparison && onlineResults.length > 0 && (
+              <ProductComparison products={filteredMaterials} />
+            )}
+            
             {/* Materials Grid */}
             {filteredMaterials.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                 {filteredMaterials.map(material => (
                   <MaterialCard key={material.id} material={material} />
                 ))}

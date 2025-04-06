@@ -3,8 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Globe } from 'lucide-react';
 import { useCart, Material } from '@/context/CartContext';
+import { Badge } from '@/components/ui/badge';
 
 interface MaterialCardProps {
   material: Material;
@@ -19,12 +20,17 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
   return (
     <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-md h-full flex flex-col">
       <Link to={`/material/${material.id}`} className="flex-grow">
-        <div className="aspect-square w-full overflow-hidden bg-gray-100">
+        <div className="aspect-square w-full overflow-hidden bg-gray-100 relative">
           <img 
             src={material.image} 
             alt={material.name} 
             className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           />
+          {material.isOnline && (
+            <Badge className="absolute top-2 right-2 bg-blue-500">
+              <Globe className="h-3 w-3 mr-1" /> Online
+            </Badge>
+          )}
         </div>
         <CardContent className="p-4">
           <h3 className="font-semibold text-lg truncate">{material.name}</h3>

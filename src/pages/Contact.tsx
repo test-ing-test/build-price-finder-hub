@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
+import { companyInfo } from '@/services/materialService';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -70,7 +71,7 @@ const Contact = () => {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
           <p className="text-xl text-construction-gray">
-            Have questions about BuildPrice? We're here to help. Reach out to our team using any of the methods below.
+            Have questions about {companyInfo.name}? We're here to help. Reach out to our team using any of the methods below.
           </p>
         </div>
         
@@ -86,7 +87,7 @@ const Contact = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-construction-gray mb-2">Call our support team</p>
-                <p className="font-semibold text-lg">(555) 123-4567</p>
+                <p className="font-semibold text-lg">{companyInfo.phone}</p>
               </CardContent>
             </Card>
             
@@ -99,7 +100,7 @@ const Contact = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-construction-gray mb-2">Send us an email</p>
-                <p className="font-semibold text-lg">info@buildprice.com</p>
+                <p className="font-semibold text-lg">{companyInfo.email}</p>
               </CardContent>
             </Card>
             
@@ -241,11 +242,11 @@ const Contact = () => {
                     </div>
                     <div className="flex items-start">
                       <Phone className="h-5 w-5 text-construction-gray mt-0.5 mr-2" />
-                      <p>(555) 123-4567</p>
+                      <p>{companyInfo.phone}</p>
                     </div>
                     <div className="flex items-start">
                       <Mail className="h-5 w-5 text-construction-gray mt-0.5 mr-2" />
-                      <p>info@buildprice.com</p>
+                      <p>{companyInfo.email}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -257,12 +258,12 @@ const Contact = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-construction-gray mb-4">
-                    Are you a construction material supplier interested in listing your products on BuildPrice? We'd love to hear from you!
+                    Are you a construction material supplier interested in listing your products on {companyInfo.name}? We'd love to hear from you!
                   </p>
                   <p className="text-construction-gray mb-4">
                     Please contact our supplier relations team at:
                   </p>
-                  <p className="font-semibold">suppliers@buildprice.com</p>
+                  <p className="font-semibold">suppliers@buildpricepro.com</p>
                 </CardContent>
               </Card>
             </div>
@@ -277,21 +278,21 @@ const Contact = () => {
               <div className="border rounded-lg p-6">
                 <h3 className="text-xl font-semibold mb-2">How do I list my construction business?</h3>
                 <p className="text-construction-gray">
-                  If you're a supplier interested in listing your materials on BuildPrice, please contact our supplier relations team at suppliers@buildprice.com.
+                  If you're a supplier interested in listing your materials on {companyInfo.name}, please contact our supplier relations team at suppliers@buildpricepro.com.
                 </p>
               </div>
               
               <div className="border rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-2">Is BuildPrice available nationwide?</h3>
+                <h3 className="text-xl font-semibold mb-2">Is {companyInfo.name} available nationwide?</h3>
                 <p className="text-construction-gray">
-                  Yes, BuildPrice is available across the country. However, supplier availability may vary by location.
+                  Yes, {companyInfo.name} is available across the country. However, supplier availability may vary by location.
                 </p>
               </div>
               
               <div className="border rounded-lg p-6">
                 <h3 className="text-xl font-semibold mb-2">Do you offer customer support?</h3>
                 <p className="text-construction-gray">
-                  Yes, our customer support team is available Monday through Friday from 9AM to 5PM, and Saturday from 10AM to 2PM. You can reach us by phone at (555) 123-4567 or by email at support@buildprice.com.
+                  Yes, our customer support team is available Monday through Friday from 9AM to 5PM, and Saturday from 10AM to 2PM. You can reach us by phone at {companyInfo.phone} or by email at {companyInfo.email}.
                 </p>
               </div>
             </div>
