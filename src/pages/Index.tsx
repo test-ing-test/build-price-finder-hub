@@ -34,7 +34,7 @@ const Index = () => {
               <Button 
                 asChild
                 variant="outline" 
-                className="border-white text-white hover:bg-white/10 h-12 px-6 text-lg"
+                className="border-white text-construction-blue hover:bg-white/10 h-12 px-6 text-lg"
               >
                 <Link to="/cart">Create Estimate</Link>
               </Button>
