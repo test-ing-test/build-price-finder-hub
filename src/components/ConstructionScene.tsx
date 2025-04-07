@@ -20,7 +20,7 @@ const BuildingBlocks = () => {
         args={[3, 0.2, 3]} 
         position={[0, -1.5, 0]}
       >
-        <meshStandardMaterial color="#cbd5e1" />
+        <meshStandardMaterial attach="material" color="#cbd5e1" />
       </Box>
       
       {/* Concrete pillars */}
@@ -28,25 +28,25 @@ const BuildingBlocks = () => {
         args={[0.3, 3, 0.3]} 
         position={[-1.3, -0.1, -1.3]}
       >
-        <meshStandardMaterial color="#94a3b8" />
+        <meshStandardMaterial attach="material" color="#94a3b8" />
       </Box>
       <Box 
         args={[0.3, 3, 0.3]} 
         position={[1.3, -0.1, -1.3]}
       >
-        <meshStandardMaterial color="#94a3b8" />
+        <meshStandardMaterial attach="material" color="#94a3b8" />
       </Box>
       <Box 
         args={[0.3, 3, 0.3]} 
         position={[-1.3, -0.1, 1.3]}
       >
-        <meshStandardMaterial color="#94a3b8" />
+        <meshStandardMaterial attach="material" color="#94a3b8" />
       </Box>
       <Box 
         args={[0.3, 3, 0.3]} 
         position={[1.3, -0.1, 1.3]}
       >
-        <meshStandardMaterial color="#94a3b8" />
+        <meshStandardMaterial attach="material" color="#94a3b8" />
       </Box>
       
       {/* Roof beams */}
@@ -54,25 +54,25 @@ const BuildingBlocks = () => {
         args={[3, 0.2, 0.3]} 
         position={[0, 1.3, -1.3]}
       >
-        <meshStandardMaterial color="#2563eb" />
+        <meshStandardMaterial attach="material" color="#2563eb" />
       </Box>
       <Box 
         args={[3, 0.2, 0.3]} 
         position={[0, 1.3, 1.3]}
       >
-        <meshStandardMaterial color="#2563eb" />
+        <meshStandardMaterial attach="material" color="#2563eb" />
       </Box>
       <Box 
         args={[0.3, 0.2, 3]} 
         position={[-1.3, 1.3, 0]}
       >
-        <meshStandardMaterial color="#2563eb" />
+        <meshStandardMaterial attach="material" color="#2563eb" />
       </Box>
       <Box 
         args={[0.3, 0.2, 3]} 
         position={[1.3, 1.3, 0]}
       >
-        <meshStandardMaterial color="#2563eb" />
+        <meshStandardMaterial attach="material" color="#2563eb" />
       </Box>
       
       {/* Floating price tag */}
@@ -81,7 +81,7 @@ const BuildingBlocks = () => {
         position={[0, 0.7, 0]} 
         rotation={[Math.PI/2, 0, 0]}
       >
-        <meshStandardMaterial color="#f97316" />
+        <meshStandardMaterial attach="material" color="#f97316" />
       </Torus>
       
       {/* Center sphere with price */}
@@ -89,7 +89,7 @@ const BuildingBlocks = () => {
         args={[0.5, 32, 32]}
         position={[0, 0.7, 0]}
       >
-        <meshStandardMaterial color="#f7fafc" />
+        <meshStandardMaterial attach="material" color="#f7fafc" />
       </Sphere>
     </group>
   );
