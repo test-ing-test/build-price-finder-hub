@@ -2,10 +2,10 @@
 import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Box, Sphere, Torus, OrbitControls } from '@react-three/drei';
-import { Group } from 'three';
+import * as THREE from 'three';
 
 const BuildingBlocks = () => {
-  const groupRef = useRef<Group>(null);
+  const groupRef = useRef<THREE.Group>(null);
   
   useFrame(({ clock }) => {
     if (groupRef.current) {

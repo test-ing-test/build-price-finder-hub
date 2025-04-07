@@ -28,8 +28,8 @@ const CartRequireAuth: React.FC<CartRequireAuthProps> = ({ children, onAddToCart
   return (
     <>
       {React.Children.map(children, child => {
-        if (React.isValidElement(child)) {
-          return React.cloneElement(child, {
+        if (React.isValidElement(child) && typeof child.type !== 'string') {
+          return React.cloneElement(child as React.ReactElement<any>, {
             onClick: handleAddToCart,
           });
         }
