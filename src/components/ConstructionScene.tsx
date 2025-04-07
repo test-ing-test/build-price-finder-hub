@@ -1,110 +1,98 @@
 
-import React, { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Box, Sphere, Torus, OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
-
-const BuildingBlocks = () => {
-  const groupRef = useRef<THREE.Group>(null);
-  
-  useFrame(({ clock }) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = clock.getElapsedTime() * 0.2;
-    }
-  });
-
-  return (
-    <group ref={groupRef}>
-      {/* Foundation */}
-      <Box 
-        args={[3, 0.2, 3]} 
-        position={[0, -1.5, 0]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#cbd5e1")} />
-      </Box>
-      
-      {/* Concrete pillars */}
-      <Box 
-        args={[0.3, 3, 0.3]} 
-        position={[-1.3, -0.1, -1.3]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#94a3b8")} />
-      </Box>
-      <Box 
-        args={[0.3, 3, 0.3]} 
-        position={[1.3, -0.1, -1.3]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#94a3b8")} />
-      </Box>
-      <Box 
-        args={[0.3, 3, 0.3]} 
-        position={[-1.3, -0.1, 1.3]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#94a3b8")} />
-      </Box>
-      <Box 
-        args={[0.3, 3, 0.3]} 
-        position={[1.3, -0.1, 1.3]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#94a3b8")} />
-      </Box>
-      
-      {/* Roof beams */}
-      <Box 
-        args={[3, 0.2, 0.3]} 
-        position={[0, 1.3, -1.3]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#2563eb")} />
-      </Box>
-      <Box 
-        args={[3, 0.2, 0.3]} 
-        position={[0, 1.3, 1.3]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#2563eb")} />
-      </Box>
-      <Box 
-        args={[0.3, 0.2, 3]} 
-        position={[-1.3, 1.3, 0]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#2563eb")} />
-      </Box>
-      <Box 
-        args={[0.3, 0.2, 3]} 
-        position={[1.3, 1.3, 0]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#2563eb")} />
-      </Box>
-      
-      {/* Floating price tag */}
-      <Torus 
-        args={[0.7, 0.1, 16, 32]} 
-        position={[0, 0.7, 0]} 
-        rotation={[Math.PI/2, 0, 0]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#f97316")} />
-      </Torus>
-      
-      {/* Center sphere with price */}
-      <Sphere
-        args={[0.5, 32, 32]}
-        position={[0, 0.7, 0]}
-      >
-        <meshStandardMaterial color={new THREE.Color("#f7fafc")} />
-      </Sphere>
-    </group>
-  );
-};
+import React from 'react';
+import { motion } from 'framer-motion';
 
 const ConstructionScene: React.FC = () => {
   return (
-    <div className="w-full h-[300px]">
-      <Canvas camera={{ position: [0, 0, 6], fov: 50 }}>
-        <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} />
-        <BuildingBlocks />
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-      </Canvas>
+    <div className="w-full h-[300px] overflow-hidden relative">
+      <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-2 p-4">
+        {/* Construction elements with scroll animations */}
+        <motion.div 
+          className="bg-construction-blue rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          viewport={{ once: true }}
+        />
+        
+        <motion.div 
+          className="bg-construction-orange rounded-lg"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          viewport={{ once: true }}
+        />
+        
+        <motion.div 
+          className="bg-construction-blue rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          viewport={{ once: true }}
+        />
+        
+        {/* Price tag element */}
+        <motion.div 
+          className="col-span-3 flex items-center justify-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          viewport={{ once: true }}
+        >
+          <div className="relative">
+            <motion.div
+              className="absolute -inset-3 bg-construction-orange/20 rounded-full blur-lg"
+              animate={{ 
+                scale: [1, 1.1, 1],
+                opacity: [0.5, 0.8, 0.5]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            />
+            <div className="bg-white shadow-lg rounded-full h-24 w-24 flex items-center justify-center text-construction-blue text-xl font-bold z-10 relative">
+              <span className="text-sm absolute top-4">from</span>
+              <span>$99</span>
+            </div>
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          className="bg-slate-200 rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          viewport={{ once: true }}
+        />
+        
+        <motion.div 
+          className="bg-slate-300 rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          viewport={{ once: true }}
+        />
+        
+        <motion.div 
+          className="bg-slate-200 rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+          viewport={{ once: true }}
+        />
+      </div>
+      
+      {/* Background grid pattern */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <svg width="100%" height="100%">
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+      </div>
     </div>
   );
 };
