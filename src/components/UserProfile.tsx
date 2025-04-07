@@ -23,7 +23,7 @@ const UserProfile: React.FC = () => {
       <>
         <Button 
           variant="default" 
-          className="bg-construction-blue hover:bg-construction-darkBlue"
+          className="bg-construction-blue hover:bg-construction-darkBlue text-white"
           onClick={() => setIsLoginModalOpen(true)}
         >
           Login
@@ -55,7 +55,7 @@ const UserProfile: React.FC = () => {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuContent className="w-56 bg-white" align="end" forceMount>
           <DropdownMenuLabel>
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">{user?.name}</p>

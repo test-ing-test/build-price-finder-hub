@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Facebook, Twitter, Mail } from 'lucide-react';
+import { Facebook, Twitter, Mail, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface LoginModalProps {
@@ -51,7 +51,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onOpenChange }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white">
         <DialogHeader>
           <DialogTitle className="text-2xl">Login to BuildPrice</DialogTitle>
           <DialogDescription>
@@ -69,6 +69,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onOpenChange }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="grid gap-2">
@@ -80,14 +81,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onOpenChange }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-construction-blue hover:bg-construction-darkBlue"
               disabled={isLoading}
             >
-              <Mail className="mr-2 h-4 w-4" />
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
               Sign in with Email
             </Button>
           </form>

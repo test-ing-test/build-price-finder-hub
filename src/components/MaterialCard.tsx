@@ -63,17 +63,23 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
     );
   };
 
+  // Ensure image is loaded properly
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = 'https://via.placeholder.com/400x400?text=Material+Image';
+  };
+
   return (
     <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-md h-full flex flex-col">
       <ContentWrapper>
         <div className="aspect-square w-full overflow-hidden bg-gray-100 relative">
           <img 
-            src={material.image} 
+            src={material.image || 'https://via.placeholder.com/400x400?text=Material+Image'} 
             alt={material.name} 
             className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+            onError={handleImageError}
           />
           {material.isOnline && (
-            <Badge className="absolute top-2 right-2 bg-blue-500">
+            <Badge className="absolute top-2 right-2 bg-blue-500 text-white">
               <Globe className="h-3 w-3 mr-1" /> Online
             </Badge>
           )}
@@ -99,8 +105,12 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
       <CardFooter className="p-4 pt-0">
         {quantity === 0 ? (
           <Button 
-            className="w-full bg-construction-blue hover:bg-construction-darkBlue"
-            onClick={() => addToCart(material, 1)}
+            className="w-full bg-construction-blue hover:bg-construction-darkBlue text-white"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              addToCart(material, 1);
+            }}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
             Add to Cart
@@ -110,7 +120,11 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
             <Button 
               size="icon" 
               variant="outline"
-              onClick={() => updateQuantity(material.id, quantity - 1)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updateQuantity(material.id, quantity - 1);
+              }}
             >
               <Minus className="h-4 w-4" />
             </Button>
@@ -118,7 +132,11 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
             <Button 
               size="icon" 
               variant="outline"
-              onClick={() => updateQuantity(material.id, quantity + 1)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updateQuantity(material.id, quantity + 1);
+              }}
             >
               <Plus className="h-4 w-4" />
             </Button>
