@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -6,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart, Plus, Minus, Globe, ExternalLink } from 'lucide-react';
 import { useCart, Material } from '@/context/CartContext';
 import { Badge } from '@/components/ui/badge';
+import CartRequireAuth from './CartRequireAuth';
+import { useAuth } from '@/context/AuthContext';
 
 interface MaterialCardProps {
   material: Material;
@@ -13,6 +14,7 @@ interface MaterialCardProps {
 
 const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
   const { addToCart, items, updateQuantity } = useCart();
+  const { isAuthenticated } = useAuth();
   
   const cartItem = items.find(item => item.material.id === material.id);
   const quantity = cartItem ? cartItem.quantity : 0;
@@ -68,6 +70,10 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
     e.currentTarget.src = 'https://via.placeholder.com/400x400?text=Material+Image';
   };
 
+  const handleAddToCart = () => {
+    addToCart(material, 1);
+  };
+
   return (
     <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-md h-full flex flex-col">
       <ContentWrapper>
@@ -103,19 +109,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
         </CardContent>
       </ContentWrapper>
       <CardFooter className="p-4 pt-0">
-        {quantity === 0 ? (
-          <Button 
-            className="w-full bg-construction-blue hover:bg-construction-darkBlue text-white"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              addToCart(material, 1);
-            }}
-          >
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            Add to Cart
-          </Button>
-        ) : (
+        {isAuthenticated && quantity > 0 ? (
           <div className="flex w-full items-center justify-between">
             <Button 
               size="icon" 
@@ -141,6 +135,15 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
               <Plus className="h-4 w-4" />
             </Button>
           </div>
+        ) : (
+          <CartRequireAuth onAddToCart={handleAddToCart}>
+            <Button 
+              className="w-full bg-construction-blue hover:bg-construction-darkBlue text-white"
+            >
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              Add to Cart
+            </Button>
+          </CartRequireAuth>
         )}
       </CardFooter>
     </Card>

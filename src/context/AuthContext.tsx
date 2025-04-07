@@ -1,100 +1,214 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-type User = {
+interface UserProfile {
   id: string;
   name: string;
   email: string;
   avatar?: string;
-  provider: 'email' | 'google' | 'facebook' | 'twitter';
-};
+}
 
 interface AuthContextType {
-  user: User | null;
+  user: UserProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (provider: 'email' | 'google' | 'facebook' | 'twitter', credentials?: { email: string; password: string }) => Promise<void>;
-  logout: () => void;
+  signup: (credentials: { email: string; password: string; name: string }) => Promise<void>;
+  logout: () => Promise<void>;
+  session: Session | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check if user is logged in on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('buildprice_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        console.log('Auth state changed:', event);
+        setSession(currentSession);
+        
+        if (currentSession?.user) {
+          const { id, email } = currentSession.user;
+          
+          // Use setTimeout to avoid Supabase AUTH_ACTIONS_DEADLOCK
+          setTimeout(async () => {
+            try {
+              // Get user profile from profiles table
+              const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('name, avatar_url')
+                .eq('id', id)
+                .single();
+                
+              if (error) throw error;
+              
+              setUser({
+                id,
+                email: email || '',
+                name: profile?.name || email?.split('@')[0] || 'User',
+                avatar: profile?.avatar_url || undefined,
+              });
+            } catch (err) {
+              console.error('Error fetching user profile:', err);
+              setUser({
+                id,
+                email: email || '',
+                name: email?.split('@')[0] || 'User',
+                avatar: undefined,
+              });
+            }
+          }, 0);
+        } else {
+          setUser(null);
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      
+      if (currentSession?.user) {
+        const { id, email } = currentSession.user;
+        
+        // Fetch user profile data
+        supabase
+          .from('profiles')
+          .select('name, avatar_url')
+          .eq('id', id)
+          .single()
+          .then(({ data: profile, error }) => {
+            if (error) {
+              console.error('Error fetching user profile:', error);
+              setUser({
+                id,
+                email: email || '',
+                name: email?.split('@')[0] || 'User',
+                avatar: undefined,
+              });
+            } else {
+              setUser({
+                id,
+                email: email || '',
+                name: profile?.name || email?.split('@')[0] || 'User',
+                avatar: profile?.avatar_url || undefined,
+              });
+            }
+            setIsLoading(false);
+          });
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (provider: 'email' | 'google' | 'facebook' | 'twitter', credentials?: { email: string; password: string }) => {
     setIsLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Create mock user based on provider
-      let mockUser: User;
-      
       if (provider === 'email' && credentials) {
-        mockUser = {
-          id: `user-${Math.random().toString(36).substr(2, 9)}`,
-          name: credentials.email.split('@')[0],
+        const { error } = await supabase.auth.signInWithPassword({
           email: credentials.email,
-          provider: 'email'
-        };
+          password: credentials.password,
+        });
+        
+        if (error) throw error;
+        toast.success('Successfully logged in');
       } else if (provider === 'google') {
-        mockUser = {
-          id: `google-${Math.random().toString(36).substr(2, 9)}`,
-          name: 'Google User',
-          email: 'user@gmail.com',
-          avatar: 'https://lh3.googleusercontent.com/a/default-user',
-          provider: 'google'
-        };
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin
+          }
+        });
+        
+        if (error) throw error;
       } else if (provider === 'facebook') {
-        mockUser = {
-          id: `fb-${Math.random().toString(36).substr(2, 9)}`,
-          name: 'Facebook User',
-          email: 'user@facebook.com',
-          avatar: 'https://graph.facebook.com/default-user/picture',
-          provider: 'facebook'
-        };
-      } else {
-        mockUser = {
-          id: `twitter-${Math.random().toString(36).substr(2, 9)}`,
-          name: 'Twitter User',
-          email: 'user@twitter.com',
-          avatar: 'https://pbs.twimg.com/profile_images/default_profile_normal.png',
-          provider: 'twitter'
-        };
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'facebook',
+          options: {
+            redirectTo: window.location.origin
+          }
+        });
+        
+        if (error) throw error;
+      } else if (provider === 'twitter') {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'twitter',
+          options: {
+            redirectTo: window.location.origin
+          }
+        });
+        
+        if (error) throw error;
       }
-      
-      // Save user to localStorage
-      localStorage.setItem('buildprice_user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      toast.success(`Welcome, ${mockUser.name}!`);
-    } catch (error) {
-      console.error('Login failed:', error);
-      toast.error('Login failed. Please try again.');
+    } catch (error: any) {
+      console.error('Login failed:', error.message);
+      toast.error(`Login failed: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('buildprice_user');
-    setUser(null);
-    toast.info('You have been logged out');
+  const signup = async (credentials: { email: string; password: string; name: string }) => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: credentials.email,
+        password: credentials.password,
+        options: {
+          data: {
+            name: credentials.name,
+          }
+        }
+      });
+      
+      if (error) throw error;
+      
+      toast.success('Successfully signed up! Please check your email for verification.');
+    } catch (error: any) {
+      console.error('Signup failed:', error.message);
+      toast.error(`Signup failed: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast.info('You have been logged out');
+    } catch (error: any) {
+      console.error('Logout failed:', error.message);
+      toast.error(`Logout failed: ${error.message}`);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        isAuthenticated: !!user, 
+        isLoading, 
+        login, 
+        signup,
+        logout,
+        session
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
