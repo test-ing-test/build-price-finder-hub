@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Search, 
   ShoppingCart, 
@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/context/CartContext';
-import { useNavigate } from 'react-router-dom';
+import UserProfile from './UserProfile';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -139,6 +139,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 )}
               </Button>
             </Link>
+            
+            <UserProfile />
           </div>
         </div>
       </header>
